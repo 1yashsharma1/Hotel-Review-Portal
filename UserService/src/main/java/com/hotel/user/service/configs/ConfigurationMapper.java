@@ -20,11 +20,5 @@ public class ConfigurationMapper {
         return new RestTemplate();
     }
 
-    @Bean
-    public RestTemplate noBalanceRestTemplate(){
-        return new RestTemplate();
-    }
-
-
 
 }

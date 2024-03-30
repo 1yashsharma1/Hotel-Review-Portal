@@ -1,6 +1,5 @@
 package com.hotel.user.service.services;
 
-import com.hotel.user.service.entities.User;
 import com.hotel.user.service.payloads.UserDto;
 
 import java.util.List;
