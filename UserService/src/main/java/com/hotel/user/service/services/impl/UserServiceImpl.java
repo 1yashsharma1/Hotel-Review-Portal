@@ -2,6 +2,7 @@ package com.hotel.user.service.services.impl;
 
 import com.hotel.user.service.entities.User;
 import com.hotel.user.service.exceptions.ResourceNotFoundException;
+import com.hotel.user.service.extenal.services.HotelService;
 import com.hotel.user.service.payloads.Hotel;
 import com.hotel.user.service.payloads.Rating;
 import com.hotel.user.service.payloads.UserDto;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private HotelService hotelService;
 
 
 
@@ -81,7 +85,10 @@ public class UserServiceImpl implements UserService {
 
        List<Rating> ratingWithHotelList=ratingList.stream().peek(rating ->
        {
-           Hotel hotel=restTemplate.getForObject("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+           //Using Feign Client API
+           Hotel hotel=hotelService.getHotel(rating.getHotelId());
+           //Using Normal Rest api request
+//           Hotel hotel=restTemplate.getForObject("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
            rating.setHotel(hotel);
        }).toList();
        userDto.setRatings(ratingWithHotelList);
