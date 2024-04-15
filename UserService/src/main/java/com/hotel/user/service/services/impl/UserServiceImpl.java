@@ -23,7 +23,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     // --------------------------------Objects -------------------------------- //
     @Autowired
-    private UserRepo userRepo ;
+    private UserRepo userRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -35,11 +35,10 @@ public class UserServiceImpl implements UserService {
     private HotelService hotelService;
 
 
-
     // --------------------------------Public Methods -------------------------------- //
     @Override
     public UserDto saveUser(UserDto user) {
-        String userId= UUID.randomUUID().toString();
+        String userId = UUID.randomUUID().toString();
         user.setId(userId);
         return userToDto(userRepo.save(dtoToUser(user)));
     }
@@ -50,57 +49,57 @@ public class UserServiceImpl implements UserService {
     // to fetch the hotel of every rating of user and display it on postman
 
     public List<UserDto> getAllUser() {
-        List<User> userList=userRepo.findAll();
-        List<UserDto> userDtoList= userList.stream().map(this::userToDto).toList();
-        userDtoList.forEach( userDto -> {
+        List<User> userList = userRepo.findAll();
+        List<UserDto> userDtoList = userList.stream().map(this::userToDto).toList();
+        userDtoList.forEach(userDto -> {
             ResponseEntity<List<Rating>> response = restTemplate.exchange(
-                "http://RATING-SERVICE/ratings/users/" + userDto.getId(),
-                HttpMethod.GET,
-                null,
+                    "http://RATING-SERVICE/ratings/users/" + userDto.getId(),
+                    HttpMethod.GET,
+                    null,
                     new ParameterizedTypeReference<>() {
                     });
-            List<Rating> ratingList= response.getBody();
-            List<Rating> ratingWithHotelList=ratingList.stream().peek(rating ->
+            List<Rating> ratingList = response.getBody();
+            List<Rating> ratingWithHotelList = ratingList.stream().peek(rating ->
             {
-                Hotel hotel=restTemplate.getForObject("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+                Hotel hotel = restTemplate.getForObject("http://HOTEL-SERVICE/hotels/" + rating.getHotelId(), Hotel.class);
                 rating.setHotel(hotel);
             }).toList();
             userDto.setRatings(ratingWithHotelList);
 
         });
 
-    return userDtoList;
+        return userDtoList;
     }
 
     @Override
     public UserDto getUserById(String userId) {
-       UserDto userDto=userToDto(userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("Resource not found for userId"+userId)));
+        UserDto userDto = userToDto(userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Resource not found for userId" + userId)));
         ResponseEntity<List<Rating>> response = restTemplate.exchange(
                 "http://RATING-SERVICE/ratings/users/" + userDto.getId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
                 });
-       List<Rating> ratingList= response.getBody();
+        List<Rating> ratingList = response.getBody();
 
-       List<Rating> ratingWithHotelList=ratingList.stream().peek(rating ->
-       {
-           //Using Feign Client API
-           Hotel hotel=hotelService.getHotel(rating.getHotelId());
-           //Using Normal Rest api request
+        List<Rating> ratingWithHotelList = ratingList.stream().peek(rating ->
+        {
+            //Using Feign Client API
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
+            //Using Normal Rest api request
 //           Hotel hotel=restTemplate.getForObject("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
-           rating.setHotel(hotel);
-       }).toList();
-       userDto.setRatings(ratingWithHotelList);
-       return userDto;
+            rating.setHotel(hotel);
+        }).toList();
+        userDto.setRatings(ratingWithHotelList);
+        return userDto;
     }
 
     // --------------------------------Private Methods -------------------------------- //
     private User dtoToUser(UserDto user) {
-        return this.modelMapper.map(user,User.class);
+        return this.modelMapper.map(user, User.class);
     }
 
     private UserDto userToDto(User user) {
-        return this.modelMapper.map(user,UserDto.class);
+        return this.modelMapper.map(user, UserDto.class);
     }
 }
