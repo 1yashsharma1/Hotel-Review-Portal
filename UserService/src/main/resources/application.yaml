@@ -1,4 +1,3 @@
-
 #server port configuration
 server:
   port: 8081
@@ -11,14 +10,14 @@ spring:
   config:
     import: optional:configserver:http://localhost:9091
 
-#database configuration
+  #database configuration
   datasource:
     url: jdbc:mysql://localhost:3306/microservices?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: iamYash@22
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#jpa configuration
+  #jpa configuration
   jpa:
     show-sql: true
     hibernate:
@@ -27,6 +26,21 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+
+#Actuator and Circuit Breaker configuration
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-details: ALWAYS
 
 
 ##eureka configuration
@@ -39,4 +53,29 @@ spring:
 #    service-url:
 #      defaultZone: http://localhost:8761/eureka/
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      ratingHotelBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
 
+  retry:
+    instances:
+      ratingToHotelService:
+        maxAttempts: 3
+        waitDuration: 3s
+
+  ratelimiter:
+    instances:
+      ratingToHotelRateLimiter:
+        timeoutDuration: 0s
+        limitForPeriod: 2
+        limitRefreshPeriod: 4s

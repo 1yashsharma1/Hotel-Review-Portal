@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface HotelService {
 
     @GetMapping("/hotels/{hotelId}")
-     Hotel getHotel(@PathVariable String hotelId);
+    Hotel getHotel(@PathVariable String hotelId);
 
 }

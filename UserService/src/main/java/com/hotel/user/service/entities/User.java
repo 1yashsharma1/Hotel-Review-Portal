@@ -21,7 +21,7 @@ public class User {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name",length = 50)
+    @Column(name = "name", length = 50)
     private String name;
 
     @Column(name = "email")
@@ -31,7 +31,7 @@ public class User {
     private String about;
 
     @Transient
-    private List<Rating> ratings=new ArrayList<>();
+    private List<Rating> ratings = new ArrayList<>();
 
 
 }
