@@ -23,35 +23,36 @@ public class UserController {
 
     //get
 
-    @GetMapping({"","/"})
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    @GetMapping({"", "/"})
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
     }
 
     //save
-    @PostMapping({"","/"})
-    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto user){
+    @PostMapping({"", "/"})
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto user) {
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
     }
 
 
-    int ratingRetry=1;
+    int ratingRetry = 1;
+
     //get by id
     @GetMapping("/{id}")
-   // @CircuitBreaker(name = "ratingToHotelCircuitBreaker",fallbackMethod = "ratingToHotelFallback")
-   // @Retry(name = "ratingToHotelService",fallbackMethod = "ratingToHotelFallback")
-    @RateLimiter(name = "ratingToHotelRateLimiter",fallbackMethod = "ratingToHotelFallback")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String id){
-        logger.info("Retry Count : {}",ratingRetry);
+    // @CircuitBreaker(name = "ratingToHotelCircuitBreaker",fallbackMethod = "ratingToHotelFallback")
+    // @Retry(name = "ratingToHotelService",fallbackMethod = "ratingToHotelFallback")
+    @RateLimiter(name = "ratingToHotelRateLimiter", fallbackMethod = "ratingToHotelFallback")
+    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+        logger.info("Retry Count : {}", ratingRetry);
         ratingRetry++;
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
 
-    public ResponseEntity<UserDto> ratingToHotelFallback(String userId,Exception ex){
-        logger.info("Fallback is excecuted because service is down"+ex.getMessage());
+    public ResponseEntity<UserDto> ratingToHotelFallback(String userId, Exception ex) {
+        logger.info("Fallback is excecuted because service is down" + ex.getMessage());
         UserDto user = UserDto.builder().email("DummyEmail@gmail").name("Dummy").id("-1121").about("Dummy about").build();
-        return new ResponseEntity<>(user,HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(user, HttpStatus.SERVICE_UNAVAILABLE);
 
     }
 

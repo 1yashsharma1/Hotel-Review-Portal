@@ -26,14 +26,14 @@ public class HotelServiceImpl implements HotelService {
     // --------------------------------Public Methods -------------------------------- //
     @Override
     public HotelDto saveHotel(HotelDto hotelDto) {
-        String hotelId= UUID.randomUUID().toString();
+        String hotelId = UUID.randomUUID().toString();
         hotelDto.setId(hotelId);
         return hotelToDto(hotelRepo.save(dtoToHotel(hotelDto)));
     }
 
     @Override
     public List<HotelDto> getAllHotel() {
-        List<Hotel> hotelList=hotelRepo.findAll();
+        List<Hotel> hotelList = hotelRepo.findAll();
         return hotelList.stream().map(this::hotelToDto).toList();
     }
 
@@ -45,10 +45,10 @@ public class HotelServiceImpl implements HotelService {
 
     // --------------------------------Private Methods -------------------------------- //
     private Hotel dtoToHotel(HotelDto hotelDto) {
-        return modelMapper.map(hotelDto,Hotel.class);
+        return modelMapper.map(hotelDto, Hotel.class);
     }
 
     private HotelDto hotelToDto(Hotel hotel) {
-        return modelMapper.map(hotel,HotelDto.class);
+        return modelMapper.map(hotel, HotelDto.class);
     }
 }

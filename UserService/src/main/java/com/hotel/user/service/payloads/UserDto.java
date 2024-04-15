@@ -21,7 +21,7 @@ public class UserDto {
 
     private String about;
 
-    private List<Rating> ratings=new ArrayList<>();
+    private List<Rating> ratings = new ArrayList<>();
 
     public UserDto(String id, String name, String email, String about, List<Rating> ratings) {
         this.id = id;

@@ -1,4 +1,3 @@
-
 #server port configuration
 server:
   port: 8081
@@ -11,14 +10,14 @@ spring:
   config:
     import: optional:configserver:http://localhost:9091
 
-#database configuration
+  #database configuration
   datasource:
     url: jdbc:mysql://localhost:3306/microservices?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: iamYash@22
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#jpa configuration
+  #jpa configuration
   jpa:
     show-sql: true
     hibernate:
